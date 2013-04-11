@@ -21,11 +21,11 @@ local attribution = {
 	"cygnus921, Kitten Pic 6",
 	" You As A Machine, Kitten Pic 7",
 
-	"mrapplegate, Llama Pic 1",
-	"niallkennedy, Llama Pic 2",
-	"Hopefoote Ambassador of the Wow, Llama Pic 3",
-	"Big Grey Mare, Llama Pic 3",
-	"Rei Ayanami en Tokyotres, Llama Pic 4",
+	"Dwilliams851, Puppy Pic 1",
+	"bowler1996p, Puppy Pic 2",
+	"halfrain, Puppy Pic 3",
+	"odonata98, Puppy Pic 3",
+	"Joe Shlabotnik, Puppy Pic 4",
 	"Eksley, Llama Pic 5"
 
 }

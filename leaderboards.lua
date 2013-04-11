@@ -8,7 +8,7 @@ function M.new()
 	--check for ser info, if there create header
 	local userInfo = Load("userInfo", userInfo)
 	local userInfoTemp = {email = nil, password = nil, username = nil}
-	local token = "536f2b4067689c1b1632f87e6a2ef31b"
+	local token = "50ce2269053f958e66c06486885d4a41"
 	local baseLink = "https://scoredojo.com/api/v1/"
 
 	--server stuff
@@ -26,7 +26,7 @@ function M.new()
 	-- bg:setFillColor(240,240,240)
 
 	
-	scoredojo.start("https://scoredojo.com/api/v1/", "536f2b4067689c1b1632f87e6a2ef31b", "10")
+	scoredojo.start("https://scoredojo.com/api/v1/", "50ce2269053f958e66c06486885d4a41", "10")
 
 	return group
 end
