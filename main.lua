@@ -1,6 +1,7 @@
 local mime = require "mime"
 json = require "json"
 --widget = require "widget"
+require "multiline_text"
 scoredojo = require "scoredojo"
 local onEnterFrame = false
 local lastTime = system.getTimer()
@@ -10,6 +11,9 @@ local lastTime = system.getTimer()
 --other stuff
 cw = display.contentWidth
 ch = display.contentHeight
+
+token = "50ce2269053f958e66c06486885d4a41"
+baseLink = "https://scoredojo.com/api/v1/"
 
 local attribution = {
 	
@@ -29,6 +33,94 @@ local attribution = {
 	"Eksley, Llama Pic 5"
 
 }
+
+	function findModel ()
+
+		device = {
+
+			name = system.getInfo("name"),
+			model = system.getInfo("model"),
+
+		}
+
+		deviceModelName = ""
+
+		if device.model == "BNTV200a" or device.model == "BNTV200" or device.model == "BNTV250" or device.model == "BNTV250a" then 
+			deviceModelName = "Nook"
+		elseif device.model == "BNTV400" or device.model == "BNTV600" then
+			deviceModelName = "NookHD"
+		elseif device.model == "A1428" or device.model == "A1429" or device.model == "A1442" then
+			deviceModelName = "iPhone5"
+		elseif device.model == "A1387" or device.model == "A1431" or device.model == "A1349" or device.model == "A1332" or device.model == "A1325" or device.model == "A1303" or device.model == "A1324" or device.model == "A1241" or device.model == "A1203" or device.model == "iPhone" then
+			deviceModelName = "iPhoneBelow5"
+		elseif device.model == "BNRV200" then
+			deviceModelName = "Macbook"
+		end
+		return deviceModelName
+	end
+	print( "findModel: ", findModel())
+
+
+	-- ask for feedback every once in a while
+	-- feedback popup listener
+	-- Handler that gets notified when the alert closes
+	local function rate()
+		local options =
+		{
+		   nookAppEAN = "2940147137871",
+		   supportedAndroidStores = {"google", "nook" },
+		}
+		native.showPopup("rateApp", options)
+	end
+
+	function thanksPopListener( event )
+	        if "clicked" == event.action then
+	                local i = event.index
+	                if 1 == i then -- No
+	                	print("rate")
+	                	native.cancelAlert(thanksAlert)
+	                	timer.performWithDelay(200, rate, 1)
+	                elseif 2 == i then -- Yes
+	                	print("Remind me")
+	                elseif 3 == i then -- Yes
+	                	print("no thanks")
+	                	local menuCount = Load("menuCount")
+	                	menuCount.shouldDisplayPopup = false
+	                	Save(menuCount, "menuCount")
+	                end
+	        end
+	end
+
+	doYouLoveAlert = 1
+	function popupListener( event )
+	        if "clicked" == event.action then
+	                local i = event.index
+	                if 1 == i then -- No
+	                	local options =
+						{
+						   to = "admin@appdojo.com",
+						   subject = "Give Us Feedback!",
+						   body = ""
+						}
+						native.showPopup("mail", options)
+						local menuCount  = Load("menuCount")
+						menuCount.shouldDisplayPopup = false
+						Save(menuCount, "menuCount")
+	                        --system.openURL( "http://developer.anscamobile.com" )	                		
+	                        -- Do nothing; dialog will simply dismiss
+	                elseif 2 == i then -- Yes
+	                	print("Rate")
+	                	-- native.cancelAlert(doYouLoveAlert)
+	                	local thanksTxt = "We are so happy to hear that you love Kitten or Puppy! It'd be really helpful if you rated us in the App Store."
+	                	native.cancelAlert(doYouLoveAlert)
+	                	timer.performWithDelay(200, function() 
+	                		thanksAlert = native.showAlert( "Thank you!", thanksTxt, { "Rate Kitten or Puppy", "Remind Me Later", "No Thanks" }, thanksPopListener )
+	                	end, 1)
+	                	--thanksAlert = native.showAlert( "Thank you!", thanksTxt, { "Maybe later" }, thanksPopListener )
+	                        -- Open URL if "Learn More" (the 2nd button) was clicked
+	                end
+	        end
+	end
 
 -- gameNetwork = require( "gameNetwork" )
 
@@ -111,81 +203,81 @@ director = {
     end
 }
 
-function displayNewButton(group, image, imageDown, x, y, shouldScale, scaleX, timeToScale, sceneToGoTo, text, font, textSize, customFunction, id)
+function displayNewButton(group, image, imageDown, x, y, shouldScale, scaleX, timeToScale, sceneToGoTo, text, tr, tg, tb, font, textSize, customFunction, id)
 	local btnGroup = display.newGroup()
 	group:insert(btnGroup)
 	local newBtn = display.newImage(image, 0, 0 )
-	newBtn.id = id
-	btnGroup:insert(newBtn)
-	--newBtn.x = x
-	local overlayBtn
-	local btnText
-	newBtn.alpha = 1
+	if newBtn then
+		newBtn.id = id
+		btnGroup:insert(newBtn)
+		--newBtn.x = x
+		local overlayBtn
+		local btnText
+		newBtn.alpha = 1
 
-	local btnText
-	if text ~= nil then
-		newBtn.text = btnText
-		btnText = display.newText( text, newBtn.x, newBtn.y, font, textSize )
-		btnText.x, btnText.y = newBtn.x, newBtn.y + 7
-		btnGroup:insert(btnText)
-	end
+		local btnText
+		if text ~= nil then
+			newBtn.text = btnText
+			btnText = display.newText( text, newBtn.x, newBtn.y, font, textSize )
+			btnText:setTextColor(tr,tg,tb)
+			btnText.x, btnText.y = newBtn.x, newBtn.y + 7
+			btnGroup:insert(btnText)
+		end
 
-	local function onNewBtnTouch (event)
-		if event.phase == "began" then
-			currentButtonDown = newBtn
-			if shouldScale == true then
-				transition.to(newBtn, {time=timeToScale, xScale = scaleX, yScale = scaleX})
-				transition.to(btnText, {time=timeToScale, xScale = scaleX, yScale = scaleX})
-			end
-			if imageDown ~= nil then
-				overlayBtn = display.newImage(btnGroup, imageDown, 0, 0)
-				btnGroup:insert(overlayBtn)
-				btnText:toFront()
-				btnText.alpha = 0.7
-			end
-		elseif event.phase == "ended" then
-			btnText.alpha = 1
-			display.remove(overlayBtn)
-			if customFunction then
-				customFunction(btnGroup)
-			end
-			currentButtonDown = nil
-			--if customFunction == nil then
+		local function onNewBtnTouch (event)
+			if event.phase == "began" then
+				currentButtonDown = newBtn
 				if shouldScale == true then
-					transition.to(newBtn, {time=timeToScale, xScale = 1, yScale = 1, onComplete=function()transition.cancel(newBtn) if sceneToGoTo ~= nil then end end})
-					transition.to(btnText, {time=timeToScale, xScale = 1, yScale = 1, onComplete=function()transition.cancel(newBtn) if sceneToGoTo ~= nil then end end})			
-				elseif shouldScale == false then
-					if sceneToGoTo ~= nil then 
-						if overlayBtn then
-							--btnGroup:removeSelf()
-						end
-						director:changeScene(sceneToGoTo)
-					end
+					transition.to(newBtn, {time=timeToScale, xScale = scaleX, yScale = scaleX})
+					transition.to(btnText, {time=timeToScale, xScale = scaleX, yScale = scaleX})
 				end
-			--end
+				if imageDown ~= nil then
+					overlayBtn = display.newImage(btnGroup, imageDown, 0, 0)
+					btnGroup:insert(overlayBtn)
+					btnText:toFront()
+					btnText.alpha = 0.5
+				end
+			elseif event.phase == "ended" then
+				btnText.alpha = 1
+				display.remove(overlayBtn)
+				if customFunction then
+					customFunction(btnGroup)
+				end
+				currentButtonDown = nil
+				--if customFunction == nil then
+					if shouldScale == true then
+						transition.to(newBtn, {time=timeToScale, xScale = 1, yScale = 1, onComplete=function()transition.cancel(newBtn) if sceneToGoTo ~= nil then end end})
+						transition.to(btnText, {time=timeToScale, xScale = 1, yScale = 1, onComplete=function()transition.cancel(newBtn) if sceneToGoTo ~= nil then end end})			
+					elseif shouldScale == false then
+						if sceneToGoTo ~= nil then 
+							if overlayBtn then
+								--btnGroup:removeSelf()
+							end
+							director:changeScene(sceneToGoTo, "crossfade")
+						end
+					end
+				--end
+			end
+			return true
 		end
-		return true
-	end
 
-	newBtn.cancel = function ()
-		if overlayBtn then
-			btnText.alpha = 1
-			display.remove(overlayBtn)
-			overlayBtn = nil
+		newBtn.cancel = function ()
+			if overlayBtn then
+				btnText.alpha = 1
+				display.remove(overlayBtn)
+				overlayBtn = nil
+			end
+			if shouldScale == true then
+				transition.to(newBtn, {time=timeToScale, xScale = 1, yScale = 1})
+				transition.to(btnText, {time=timeToScale, xScale = 1, yScale = 1})
+			end
 		end
-		if shouldScale == true then
-			transition.to(newBtn, {time=timeToScale, xScale = 1, yScale = 1})
-			transition.to(btnText, {time=timeToScale, xScale = 1, yScale = 1})
-		end
-	end
 
-	
-	--newBtn.touch = onNewBtnTouch
-	--newBtn:addEventListener("touch", newBtn)
-	newBtn:addEventListener("touch", onNewBtnTouch)
-	btnGroup.x = x
-	btnGroup.y = y
-	return btnGroup
+		newBtn:addEventListener("touch", onNewBtnTouch)
+		btnGroup.x = x
+		btnGroup.y = y
+		return btnGroup
+	end
 end
 
 local function runtimeTouch (event)

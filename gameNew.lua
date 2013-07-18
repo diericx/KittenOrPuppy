@@ -9,7 +9,7 @@ function M.new()
 
 	local picsTable = {}
 	local reactSpeeds = {}
-	local numberOfImages = 7
+	local numberOfImages = 6
 	local newImageTime = 55 --55
 	local score = 0
 	local newImageCooldown = 150 --150
@@ -35,20 +35,27 @@ function M.new()
 
 	-- scoredojo.refreshUserData("https://scoredojo.com/api/v1/", "536f2b4067689c1b1632f87e6a2ef31b")
 
+	--chagne time according to device 
+	local deviceModel = findModel()
+	if deviceModel == "Nook" then
+		newImageTime = 35
+	end 
+	print(findModel(), "$$#$#$#$#$#$#$#$#$#$#$#$#$#$#")
+
 	local function loadImages ()
 		for i = 1, (numberOfImages*2) do
 			local folder
 			local picNumb
 			if i <= numberOfImages then
-				folder = "llama"
+				folder = "kitten"
 				picNumb = i
 			elseif i > numberOfImages then
-				folder = "duck"
+				folder = "puppy"
 				picNumb = i - numberOfImages
 			end
 			local test = "Images/"..tostring(folder).."/"..tostring(picNumb)..".png"
 			print (test)
-			local image = display.newImage(group, "Images/"..tostring(folder).."/"..tostring(picNumb)..".png", 10000, 10000)
+			local image = display.newImage(group, "Images/"..tostring(folder).."/"..tostring(folder)..tostring(picNumb)..".png", 10000, 10000)
 			image.display = false
 			picTablePosition = #picsTable + 1
 			picsTable[picTablePosition] = image
@@ -86,7 +93,31 @@ function M.new()
 	end
 	displayNewPic()
 
+	local function feedback ()
+		print("FEEDBACK")
+		local menuCount = Load("menuCount")
+		-- if its not there, create one
+		if menuCount == nil then
+			menuCount = {count = 0, top = 5, shouldDisplayPopup = true}
+			Save(menuCount, "menuCount")
+		-- if it is there, add to it
+		elseif menuCount.shouldDisplayPopup == true then
+			if menuCount.count < menuCount.top then
+				menuCount.count = menuCount.count + 1
+				Save(menuCount, "menuCount")
+			-- if it equals the top then display popup
+			elseif menuCount.count == menuCount.top then
+				menuCount.count = 0
+				Save(menuCount, "menuCount")
+				--display a popup
+				-- Show alert with five buttons
+				doYouLoveAlert = native.showAlert( "Do you love Kitten or Puppy?", "", { "No", "Yes" }, popupListener )
+			end
+		end
+	end
+
 	local function endGame ()
+		feedback()
 		if tooSlow == true then
 			yourFault.text = "You were too slow!"
 		elseif falseAnswer == true then
@@ -128,7 +159,7 @@ function M.new()
 
 		local userInfo = Load("userInfo")
 		if userInfo then
-			scoredojo.submitHighscore ("https://scoredojo.com/api/v1/", "536f2b4067689c1b1632f87e6a2ef31b", 1, score)
+			scoredojo.submitHighscore (baseLink, token, 1, score)
 		else 
 			signInTxt.y = ch-50
 		end
@@ -248,12 +279,15 @@ function M.new()
 	-- llamaBtn.id = "llama"
 	-- group:insert(llamaBtn)
 
-	retryBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2-100050, ch/2-200000, false, 1, nil, nil, "Retry", "DimitriSwank", 60, restart, nil)	
+	--retryBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2-100050, ch/2-200000, false, 1, nil, nil, "Retry", "DimitriSwank", 60, restart, nil)	
+	retryBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2 - 100050, cw/2-200000, false, 1, nil, nil, "Retry", 240, 240, 240, "DimitriSwank", 60, restart, nil)
 
-	menuBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2-100050, ch/2-200000, false, 1, nil, "menu", "Menu", "DimitriSwank", 60, nil, nil)	
+	--menuBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2-100050, ch/2-200000, false, 1, nil, "menu", "Menu", "DimitriSwank", 60, nil, nil)	
+	menuBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw/2 - 100050, cw/2-200000, false, 1, nil, "menu", "Menu", 240, 240, 240, "DimitriSwank", 60, nil, nil)
 
-	leaderBoardsBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2-100050, ch/2-200000, false, 1, nil, "leaderboards", "Highscores", "DimitriSwank", 55, nil, nil)	
-	
+	--leaderBoardsBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2-100050, ch/2-200000, false, 1, nil, "leaderboards", "Highscores", "DimitriSwank", 55, nil, nil)	
+	leaderBoardsBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 100050, cw/2-200000, false, 1, nil, "leaderboards", "Highscores", 240, 240, 240, "DimitriSwank", 55, nil, nil)
+
 	darkener = display.newRect(group, 100000,0,cw,ch)
 	darkener:setFillColor(0,0,0)
 	darkener.alpha = 0.5
@@ -352,9 +386,11 @@ function M.new()
 				readySetGoTxt.xScale, readySetGoTxt.yScale = 1,1
 				transition.to(readySetGoTxt, {time=scaleTime, xScale = 2, yScale = 2, alpha = 0})
 				
-				llamaBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-600, ch-150, false, 1, nil, nil, "Llama", "DimitriSwank", 60, onButtonEvent, "llama")
+				--llamaBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-600, ch-150, false, 1, nil, nil, "Kitten", "DimitriSwank", 60, onButtonEvent, "llama")
+				llamaBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-600, ch-150, false, 1, nil, nil, "Kitten", 240, 240, 240, "DimitriSwank", 55, onButtonEvent, "llama")
 
-				duckBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-300, ch-150, false, 1, nil, nil, "Duck", "DimitriSwank", 60, onButtonEvent, "duck")
+				--duckBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-300, ch-150, false, 1, nil, nil, "Puppy", "DimitriSwank", 60, onButtonEvent, "duck")
+				duckBtn = displayNewButton(group, "Images/buttonUp.png", "Images/buttonDown.png", cw-300, ch-150, false, 1, nil, nil, "Puppy", 240, 240, 240, "DimitriSwank", 55, onButtonEvent, "duck")
 
 			end
 		end

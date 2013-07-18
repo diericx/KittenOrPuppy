@@ -41,6 +41,29 @@ function M.new()
 	end
 	loadimages(5)
 
+	local function feedback ()
+		print("FEEDBACK")
+		local menuCount = Load("menuCount")
+		-- if its not there, create one
+		if menuCount == nil then
+			menuCount = {count = 0, top = 5, shouldDisplayPopup = true}
+			Save(menuCount, "menuCount")
+		-- if it is there, add to it
+		elseif menuCount.shouldDisplayPopup == true then
+			if menuCount.count < menuCount.top then
+				menuCount.count = menuCount.count + 1
+				Save(menuCount, "menuCount")
+			-- if it equals the top then display popup
+			elseif menuCount.count == menuCount.top then
+				menuCount.count = 0
+				Save(menuCount, "menuCount")
+				--display a popup
+				-- Show alert with five buttons
+				doYouLoveAlert = native.showAlert( "Do you love Kitten or Puppy?", "", { "No", "Yes" }, popupListener )
+			end
+		end
+	end
+
 	--display a new llamaduck pic
 	local function newPic (isFirstPic)
 		-- local randomLlama = math.random(1,5)
@@ -125,6 +148,7 @@ function M.new()
 	end
 
 	local function endGame()
+		feedback()
 		group:toFront()
 		setEnterFrame(false)
 		local gameOverText = display.newText( "Game Over!", 0, 0, native.systemDefaultFont, 60)

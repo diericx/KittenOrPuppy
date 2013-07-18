@@ -22,52 +22,52 @@ function M.new()
 
 	local mail = display.newImage(group, "Images/mail.png", -100, 0)
 	mail:setReferencePoint( display.CenterReferencePoint )
-	mail.x = cw/2 + 200
+	mail.x = cw/2 + 15
 	mail.y = ch - 135
 	mail:scale(0.8,0.8)
 
 	local sheetData = { width=256, height=256, numFrames=2, sheetContentWidth=512, sheetContentHeight=256 }
 	 
-	local mySheet = graphics.newImageSheet( "Images/audio.png", sheetData )
+	-- local mySheet = graphics.newImageSheet( "Images/audio.png", sheetData )
 	 
-	local sequenceData = {
-	   { name = "toggle", start=1, count=2 },
-	}
+	-- local sequenceData = {
+	--    { name = "toggle", start=1, count=2 },
+	-- }
 
-	local audioAnimation = display.newSprite( mySheet, sequenceData )
-	group:insert(audioAnimation)
-	audioAnimation:scale(0.85, 0.85)
-	audioAnimation.x = display.contentWidth/2 - 160  --center the sprite horizontally
-	audioAnimation.y = display.contentHeight/2 + 370  --center the sprite vertically
-	audioAnimation:setFrame(1)
+	-- local audioAnimation = display.newSprite( mySheet, sequenceData )
+	-- group:insert(audioAnimation)
+	-- audioAnimation:scale(0.85, 0.85)
+	-- audioAnimation.x = display.contentWidth/2 - 160  --center the sprite horizontally
+	-- audioAnimation.y = display.contentHeight/2 + 370  --center the sprite vertically
+	-- audioAnimation:setFrame(1)
 
-	local function updateAudioToggle()
-		local audioData = Load("audioData")
-		print("Audio is...", audioData.toggle)
-		if audioData.toggle == "on" then
-			audioAnimation:setFrame(1)
-		elseif audioData.toggle == "off" then
-			audioAnimation:setFrame(2)
-		end
-	end
-	updateAudioToggle()
+	-- local function updateAudioToggle()
+	-- 	local audioData = Load("audioData")
+	-- 	print("Audio is...", audioData.toggle)
+	-- 	if audioData.toggle == "on" then
+	-- 		audioAnimation:setFrame(1)
+	-- 	elseif audioData.toggle == "off" then
+	-- 		audioAnimation:setFrame(2)
+	-- 	end
+	-- end
+	-- updateAudioToggle()
 
-	local function toggleAudio()
-		local audioData = Load("audioData")
-		if audioData.toggle == "on" then
-			audioData.toggle = "off"
-			Save(audioData, "audioData")
-			updateAudioToggle()
-		elseif audioData.toggle == "off" then
-			audioData.toggle = "on"
-			Save(audioData, "audioData")
-			updateAudioToggle()
-		end
-	end
-	audioAnimation:addEventListener("tap", toggleAudio)
+	-- local function toggleAudio()
+	-- 	local audioData = Load("audioData")
+	-- 	if audioData.toggle == "on" then
+	-- 		audioData.toggle = "off"
+	-- 		Save(audioData, "audioData")
+	-- 		updateAudioToggle()
+	-- 	elseif audioData.toggle == "off" then
+	-- 		audioData.toggle = "on"
+	-- 		Save(audioData, "audioData")
+	-- 		updateAudioToggle()
+	-- 	end
+	-- end
+	-- audioAnimation:addEventListener("tap", toggleAudio)
 	 	
 	local function newMail(event)
-		system.openURL( "mailto:appdojostudios@gmail.com?subject=Llama Or Duck Game&body=")
+		system.openURL( "mailto:appdojostudios@gmail.com?subject=Kitten or Puppy Game&body=")
 	end
 	mail:addEventListener("tap", newMail)
 
@@ -86,12 +86,11 @@ function M.new()
 		timer.performWithDelay( 100, function () director:changeScene("gameNew") end, 1)
 	end
 
-	local playBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2, false, 1, 0, nil, "Play", "DimitriSwank", 80, displayLoadingScreen, nil)
-	local leaderboardsBtnH = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 + 200, false, 1, 0, "leaderboards", "Highscores", "DimitriSwank", 57, nil, nil)
-	local creditsBtn = displayNewButton(group, "Images/buttonUpSmall.png", "Images/buttonDownSmall.png", cw-200, 10, false, 1, nil, "creditsPage", "Credits", "DimitriSwank", 40, nil, nil)	
+	local playBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2, false, 1, nil, nil, "Play", 240, 240, 240, "DimitriSwank", 80, displayLoadingScreen, nil)
 
-	--group:insert(leaderboardsBtnH)
-	--director:changeScene("game")
+	local leaderboardsBtnH = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 + 200, false, 1, nil, "leaderboards", "Highscores", 240, 240, 240, "DimitriSwank", 55, nil, nil)
+
+	local creditsBtn = displayNewButton(group, "Images/buttonUpSmall.png", "Images/buttonDownSmall.png", cw - 200, 10, false, 1, nil, "creditsPage", "Credits", 240, 240, 240, "DimitriSwank", 40, nil, nil)
 
 	return group
 end
