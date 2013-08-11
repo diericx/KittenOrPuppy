@@ -683,7 +683,10 @@ function M.submitHighscore (baseLink, leaderboardKey, scoreType, scoreValue)
 
 	local json = require "json"
 	local userInfo = Load("userInfo")
+
 	if userInfo and userInfo.authKey and userInfo.username then
+		headers["Accept"] = "application/json"
+		headers["Authorization"] = "Token token="..tostring(userInfo.authKey)
 		local function submitHighscoreCallback ( event )
 			local data = json.decode(event.response)
 			print(data)

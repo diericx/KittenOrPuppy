@@ -159,7 +159,15 @@ function M.new()
 
 		local userInfo = Load("userInfo")
 		if userInfo then
-			scoredojo.submitHighscore (baseLink, token, 1, score)
+			print("SUBMITSCOOOOORE")
+			local userInfo = Load("userInfo", userInfo)
+
+			headers["Accept"] = "application/json"
+
+			if userInfo ~= nil and userInfo.authKey ~= nil then
+				headers["Authorization"] = "Token token="..tostring(userInfo.authKey)
+			end
+			scoredojo.submitHighscore (baseLink, "50ce2269053f958e66c06486885d4a41", 1, score)
 		else 
 			signInTxt.y = ch-50
 		end
