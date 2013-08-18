@@ -490,6 +490,15 @@ function M.start (baseLink, leaderboardKey, leaderBoardCount)
 											playerScoreText.text = "Your in the top 10!"
 											playerScoreText.x = playerScoreText.x + 165
 											return userRankScore
+										elseif data.rank > 10 then
+											playerRankText.text = tostring(data.rank)
+											playerScoreText.text = tostring(data.score)
+											if data.rank > 99 then
+												playerRankText.size = playerRankText.size - 25
+												playerRankText.x = playerRankText.x - 5
+											end
+											playerScoreText.x = playerScoreText.x + 15
+											return userRankScore
 										end
 									else 
 										playerRankText.text = "--"
@@ -655,7 +664,7 @@ function M.start (baseLink, leaderboardKey, leaderBoardCount)
 	    }
 	    tabs = widget.newTabBar{
 	    	height=130,
-	        top=ch-143,
+	        top=ch-130,
 	       	backgroundFile = "scoredojo/tabbar.png",
 			tabSelectedLeftFile = "scoredojo/tabBar_tabSelectedLeft.png",
 			tabSelectedMiddleFile = "scoredojo/tabBar_tabSelectedMiddle.png",
@@ -685,6 +694,7 @@ function M.submitHighscore (baseLink, leaderboardKey, scoreType, scoreValue)
 	local userInfo = Load("userInfo")
 
 	if userInfo and userInfo.authKey and userInfo.username then
+		headers["Content-Type"] = "application/x-www-form-urlencoded"
 		headers["Accept"] = "application/json"
 		headers["Authorization"] = "Token token="..tostring(userInfo.authKey)
 		local function submitHighscoreCallback ( event )

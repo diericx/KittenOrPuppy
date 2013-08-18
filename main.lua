@@ -176,6 +176,14 @@ else
 	Save(audioData, "audioData")
 end
 
+local shop = Load("shop")
+if shop == nil then
+	shop = {hearts=2}
+	Save(shop, "shop")
+else 
+
+end
+
 
 --check for ser info, if there create header
 local userInfo = Load("userInfo", userInfo)
@@ -184,7 +192,6 @@ headers = {}
 headers["Accept"] = "application/json"
 
 if userInfo ~= nil and userInfo.authKey ~= nil then
-	print("Asdf")
 	headers["Authorization"] = "Token token="..tostring(userInfo.authKey)
 	print(userInfo.authKey, userInfo.username, userInfo.password)
 end

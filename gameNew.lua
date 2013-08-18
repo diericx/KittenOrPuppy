@@ -30,6 +30,10 @@ function M.new()
 	local enterframe
 	local signInTxt
 	local countdownToStart
+	local heart1
+	local heart2
+	local heart3
+	local heart4
 	local audioData = Load("audioData")
 
 
@@ -318,6 +322,9 @@ function M.new()
 
 	signInTxt = display.newText(group, "You need to login or create a Scoredojo account to view or submit highscores!", 23, 0, cw, 200, "Mensch", 33 )
 	signInTxt.y = ch-50000
+
+	heart1 = display.newImage(group, "Images/heart.png", 0, 0)
+	heart1.x, heart1.y = scoreText.x - heart1.width, scoreText.y + heart1.height
 
 	-- local duckBtn = widget.newButton
 	-- {
