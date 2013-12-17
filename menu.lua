@@ -86,9 +86,11 @@ function M.new()
 		timer.performWithDelay( 100, function () director:changeScene("gameNew") end, 1)
 	end
 
-	local playBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2, false, 1, nil, nil, "Play", 240, 240, 240, "DimitriSwank", 80, displayLoadingScreen, nil)
+	local playBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 - 150, false, 1, nil, nil, "Play", 240, 240, 240, "DimitriSwank", 80, displayLoadingScreen, nil)
 
-	local leaderboardsBtnH = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 + 200, false, 1, nil, "leaderboards", "Highscores", 240, 240, 240, "DimitriSwank", 55, nil, nil)
+	local leaderboardsBtnH = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 + 50, false, 1, nil, "leaderboards", "Highscores", 240, 240, 240, "DimitriSwank", 55, nil, nil)
+
+	local upgradeBtn = displayNewButton(group, "Images/buttonUpMenu.png", "Images/buttonDownMenu.png", cw/2 - 175, cw/2 + 250, false, 1, nil, "upgrade", "Upgrade", 240, 240, 240, "DimitriSwank", 70, nil, nil)
 
 	local creditsBtn = displayNewButton(group, "Images/buttonUpSmall.png", "Images/buttonDownSmall.png", cw - 200, 10, false, 1, nil, "creditsPage", "Credits", 240, 240, 240, "DimitriSwank", 40, nil, nil)
 

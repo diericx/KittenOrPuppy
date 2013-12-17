@@ -7,11 +7,10 @@ function M.new()
 	local llamaDuckPics = display.newGroup()
 	group:insert(llamaDuckPics)
 
-	local picsTable = {}
 	local reactSpeeds = {}
-	local numberOfImages = 6
 	local newImageTime = 55 --55
 	local score = 0
+	local lives = 3
 	local newImageCooldown = 150 --150
 	local gameOver = false
 	local tooSlow = false
@@ -33,9 +32,8 @@ function M.new()
 	local heart1
 	local heart2
 	local heart3
-	local heart4
 	local audioData = Load("audioData")
-
+	local dlc = Load("DLC", userInfo)
 
 	-- scoredojo.refreshUserData("https://scoredojo.com/api/v1/", "536f2b4067689c1b1632f87e6a2ef31b")
 
@@ -46,27 +44,6 @@ function M.new()
 	end 
 	print(findModel(), "$$#$#$#$#$#$#$#$#$#$#$#$#$#$#")
 
-	local function loadImages ()
-		for i = 1, (numberOfImages*2) do
-			local folder
-			local picNumb
-			if i <= numberOfImages then
-				folder = "kitten"
-				picNumb = i
-			elseif i > numberOfImages then
-				folder = "puppy"
-				picNumb = i - numberOfImages
-			end
-			local test = "Images/"..tostring(folder).."/"..tostring(picNumb)..".png"
-			print (test)
-			local image = display.newImage(group, "Images/"..tostring(folder).."/"..tostring(folder)..tostring(picNumb)..".png", 10000, 10000)
-			image.display = false
-			picTablePosition = #picsTable + 1
-			picsTable[picTablePosition] = image
-		end
-	end
-	loadImages()
-
 	--load audio
 	-- local correctSound = audio.loadSound("correct.mp3")
 	-- local wrongSound = audio.loadSound("wrong.mp3")
@@ -76,7 +53,7 @@ function M.new()
 
 		repeat 
 			llamaOrDuck = math.random(1,2)
-			newRandomImage = math.random(1, numberOfImages) 
+			newRandomImage = math.random(1, numberOfImages/2) 
 			if llamaOrDuck == 1 then
 					newRandomImage = newRandomImage + numberOfImages
 			end
@@ -96,6 +73,22 @@ function M.new()
 		oldRandomImage = randomImage
 	end
 	displayNewPic()
+
+	local function deathWithLife() 
+		print("NEW IMAGE CD = ", newImageCooldown)
+      	score = score - 50
+      	if (score < 0) then
+      		score = 0
+      	end
+      	scoreText.text = score
+      	--add speed to table
+      	local tablePos = #reactSpeeds + 1
+      	reactSpeeds[tablePos] = newImageCooldown
+      	--reset stuff
+      	newImageCooldown = newImageTime
+      	displayNewPic()
+
+	end
 
 	local function feedback ()
 		print("FEEDBACK")
@@ -127,21 +120,7 @@ function M.new()
 		elseif falseAnswer == true then
 			yourFault.text = "Wrong answer!"
 		end
-		-- local yourSpeedTxt = display.newText(group, "Your Average Speed:", 0, 0, native.SystemDefaultFont, 60)
-		-- yourSpeedTxt.x, yourSpeedTxt.y = cw/2, ch/2 + 150
-		-- yourSpeedTxt:setTextColor(255, 255, 255)
-		
-		-- local yourSpeedNumbTxt = display.newText(group, "", 0, 0, native.SystemDefaultFont, 60)
-		-- yourSpeedNumbTxt.x, yourSpeedNumbTxt.y = cw/2, ch/2 + 200
-		-- yourSpeedNumbTxt:setTextColor(255, 255, 255)
-		
-		--calculate avg speed
-		-- local totalOfSpeeds = 0
-		-- for i = 1, #reactSpeeds do
-		-- 	totalOfSpeeds = totalOfSpeeds + reactSpeeds[i]
-		-- end
-		-- local avgSpeed = totalOfSpeeds / #reactSpeeds
-		-- yourSpeedNumbTxt.text = math.round(avgSpeed)
+
 		darkener.x = 0
 
 		yourScoreTxt.x, yourScoreTxt.y = cw/2, ch/2-300
@@ -215,6 +194,22 @@ function M.new()
 		falseAnswer = false 
 		gameOver = false
 
+		if (dlc.lives) then
+  			display.remove(heart1)
+      		display.remove(heart2)
+      		display.remove(heart3)
+      		lives = 3
+
+			heart1 = display.newImage(group, "Images/heart.png", 0, 0)
+			heart1.x, heart1.y = scoreText.x - heart1.width - 20, scoreText.y + heart1.height
+
+			heart2 = display.newImage(group, "Images/heart.png", 0, 0)
+			heart2.x, heart2.y = heart1.x + heart1.width + 20, heart1.y
+
+			heart3 = display.newImage(group, "Images/heart.png", 0, 0)
+			heart3.x, heart3.y = heart2.x + heart2.width + 20, heart2.y
+		end
+
 		countdownToStart()
 
 		setEnterFrame(enterframe)	
@@ -234,8 +229,28 @@ function M.new()
 	      		end
 	      		--audio.play(wrongSound)
 	      		--audio.play(crowdSound)
-	      		falseAnswer = true
-	      		endGame()
+		      	if (dlc.lives) then
+	      			if (lives >= 0) then
+	      				if (lives == 3) then
+	      					lives = lives - 1
+	      					deathWithLife()
+							display.remove(heart3)
+						elseif (lives == 2) then
+							lives = lives - 1
+							deathWithLife()
+							display.remove(heart2)
+						elseif (lives == 1) then
+							lives = lives - 1
+							display.remove(heart1)
+							falseAnswer = true
+							endGame()
+						end
+					end
+				else
+					falseAnswer = true
+	      			endGame()
+	      			setEnterFrame(nil)
+	      		end
 	      else
 	      	if gameOver == false then
 	      		if audioData.toggle == "on" then
@@ -244,7 +259,9 @@ function M.new()
 	      		--add score according to speed
 	      		--audio.play(correctSound)
 		      	print("NEW IMAGE CD = ", newImageCooldown)
-		      	score = score + math.round((newImageCooldown / 60)*100)
+		      	--score = score + 1
+		      	score = score + math.round( (newImageCooldown/2) * 10)
+		      	--score = score + math.round((newImageCooldown / 60)*100)
 		      	scoreText.text = score
 		      	--add speed to table
 		      	local tablePos = #reactSpeeds + 1
@@ -269,7 +286,8 @@ function M.new()
 	      --target:setLabel( "Pressed" )  --set a new label
 	   elseif ( "ended" == phase ) then
 	      if target.id == "retry" then
-	      	director:changeScene("restart")
+	      		
+	      	--director:changeScene("restart")
 	      end
 	      --target:setLabel( target.baseLabel )  --reset the label
 	   end
@@ -323,8 +341,16 @@ function M.new()
 	signInTxt = display.newText(group, "You need to login or create a Scoredojo account to view or submit highscores!", 23, 0, cw, 200, "Mensch", 33 )
 	signInTxt.y = ch-50000
 
-	heart1 = display.newImage(group, "Images/heart.png", 0, 0)
-	heart1.x, heart1.y = scoreText.x - heart1.width, scoreText.y + heart1.height
+	if (dlc.lives) then
+		heart1 = display.newImage(group, "Images/heart.png", 0, 0)
+		heart1.x, heart1.y = scoreText.x - heart1.width - 20, scoreText.y + heart1.height
+
+		heart2 = display.newImage(group, "Images/heart.png", 0, 0)
+		heart2.x, heart2.y = heart1.x + heart1.width + 20, heart1.y
+
+		heart3 = display.newImage(group, "Images/heart.png", 0, 0)
+		heart3.x, heart3.y = heart2.x + heart2.width + 20, heart2.y
+	end
 
 	-- local duckBtn = widget.newButton
 	-- {
@@ -356,6 +382,7 @@ function M.new()
 	-- retryBtn.id = "retry"
 	-- group:insert(retryBtn)
 
+
 	function enterframe()
 		for i = 1, #picsTable do
 			if picsTable[i].display == true then
@@ -375,9 +402,28 @@ function M.new()
 			end
 			--audio.play(wrongSound)
 			--audio.play(crowdSound)
-			tooSlow = true
-			endGame()
-			setEnterFrame(nil)
+			if (dlc.lives) then
+      			if (lives >= 0) then
+      				if (lives == 3) then
+      					lives = lives - 1
+      					deathWithLife()
+						display.remove(heart3)
+					elseif (lives == 2) then
+						lives = lives - 1
+						deathWithLife()
+						display.remove(heart2)
+					elseif (lives == 1) then
+						lives = lives - 1
+						display.remove(heart1)
+						tooSlow = true
+						endGame()
+					end
+				end
+			else
+				tooSlow = true
+      			endGame()
+      			setEnterFrame(nil)
+      		end
 		end
 	end
 	setEnterFrame(enterframe)

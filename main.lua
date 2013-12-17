@@ -185,6 +185,43 @@ else
 end
 
 
+local dlc = Load("DLC", userInfo)
+
+if dlc == nil then
+	dlc = {
+		lives = false,
+		morePics = false
+	}
+	Save(dlc, "DLC")
+end
+
+picsTable = {}
+numberOfImages = 10
+if (dlc.morePics) then
+	numberOfImages = 10
+end
+
+local function loadImages ()
+	for i = 1, (numberOfImages*2) do
+		local folder
+		local picNumb
+		if i <= numberOfImages then
+			folder = "kitten"
+			picNumb = i
+		elseif i > numberOfImages then
+			folder = "puppy"
+			picNumb = i - numberOfImages
+		end
+		local test = "Images/"..tostring(folder).."/"..tostring(folder)..tostring(picNumb)..".jpg"
+		--print(test)
+		local image = display.newImage( "Images/"..tostring(folder).."/"..tostring(folder)..tostring(picNumb)..".jpg", 10000, 10000)
+		image.display = false
+		picTablePosition = #picsTable + 1
+		picsTable[picTablePosition] = image
+	end
+end
+loadImages()
+
 --check for ser info, if there create header
 local userInfo = Load("userInfo", userInfo)
 --server stuff

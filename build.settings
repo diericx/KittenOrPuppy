@@ -7,6 +7,16 @@ settings = {
 		default = "portrait",
 		supported = { "portrait", }
 	},
+
+	plugins =
+    {
+        -- key is the name passed to Lua's 'require()'
+        ["plugin.fortumo"] =
+        {
+            -- required
+            publisherId = "com.fortumo",
+        },
+    }, 
 	
 	iphone = {
 		plist = {
@@ -35,7 +45,9 @@ settings = {
 	{
 		usesPermissions =
 		{
-	  		"android.permission.INTERNET",
+			"android.permission.INTERNET",
+   		    "com.android.vending.BILLING",
+      		"com.android.vending.CHECK_LICENSE",
 	  	}
 
 	}

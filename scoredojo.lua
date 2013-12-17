@@ -397,7 +397,20 @@ function M.start (baseLink, leaderboardKey, leaderBoardCount)
 
 			if #table > 0 then
 				--create scroll view
-				local scrollView = scrollView.new{ top=topBoundary + 100, bottom=bottomBoundary + 200 }
+				
+				--local scrollView = scrollView.new{ top=topBoundary + 100, bottom=bottomBoundary + 200 }
+				
+				local scrollView = widget.newScrollView
+				{
+				    top = 100,
+				    left = 0,
+				    width = cw,
+				    height = ch - 300,
+				    scrollWidth = cw,
+				    scrollHeight = 100,
+				    hideBackground = true
+				}
+
 				group:insert(scrollView)
 				--move tabs to front
 				if tabs then 
@@ -460,7 +473,7 @@ function M.start (baseLink, leaderboardKey, leaderBoardCount)
 								--print("ONLY 1")
 								playerRow = display.newImage( "scoredojo/tableSingle.png", 22, i*114 - 30)
 								playerRow.x = cw/2
-								playerRow.y = playerRow.y + 50
+								playerRow.y = playerRow.y - 30
 								currentLoaderboardGroup:insert( playerRow )
 								local playerRankBox = display.newRoundedRect(currentLoaderboardGroup, playerRow.x - 263, playerRow.y - 50, 100, 100, 20)
 								playerRankBox:setFillColor(100, 100, 100)
